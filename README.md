@@ -1,22 +1,42 @@
-# 🔐 Gestor de Contraseñas Inteligente (CRUD Backend)
+# 🔐 Gestor de Contraseñas - TalentoLab
 
-¡Bienvenido al Gestor de Contraseñas Modular! Este software fue desarrollado en Python aplicando las mejores prácticas de la programación modular y estructuras de datos dinámicas. Permite centralizar, buscar, editar y proteger credenciales de forma eficiente en consola.
+Este es un sistema de gestión de credenciales desarrollado en **Python** como parte del programa de formación en **Talento Tech**. El proyecto representa una evolución técnica significativa, migrando de una estructura de datos basada en listas hacia una arquitectura profesional optimizada con **diccionarios**, **modularización** y **documentación técnica** [cite: 22, 224].
 
-## 🚀 Características y Arquitectura Básica
-El sistema fue migrado de una lógica rudimentaria de listas paralelas a una robusta estructura de **Lista de Diccionarios**, permitiendo una manipulación segura y directa de la memoria sin riesgos de desfasaje de datos.
+## 🚀 Características Principales
 
-### 🛠️ Funcionalidades Implementadas (Estructura CRUD):
-1. **Create (Alta):** Registro modular mediante funciones independientes que capturan `cuenta`, `usuario` y `contraseña` blindando el sistema contra campos vacíos.
-2. **Read (Lectura General y Búsqueda):** - Listado prolijo de todos los registros en memoria mediante f-strings.
-   - Algoritmo de **Búsqueda Lineal** optimizado mediante banderas lógicas (interruptores) para localizar cuentas específicas en silencio.
-3. **Update (Modificación):** Sobreescritura dinámica de datos directamente sobre las llaves del diccionario seleccionado.
-4. **Delete (Baja):** Remoción segura de elementos mediante el método nativo `.remove()` y detención controlada con `break` para resguardar la consistencia de los índices de la lista.
+*   **Arquitectura Modular**: Separación estricta de responsabilidades entre la interfaz de usuario (`app.py`) y la lógica de negocio (`logica_gestor.py`) [cite: 161, 189].
+*   **Eficiencia O(1)**: Uso de diccionarios para garantizar búsquedas, ediciones y eliminaciones instantáneas mediante el uso de claves únicas (cuentas), optimizando drásticamente el rendimiento [cite: 104, 110].
+*   **Validación de Datos**: Implementación de controles de flujo para evitar campos vacíos y asegurar la integridad de la información ingresada [cite: 36, 112].
+*   **Experiencia de Usuario (UX)**: Interfaz de consola mejorada con la librería **Colorama**, proporcionando feedback visual intuitivo (éxitos en verde, errores en rojo y advertencias en amarillo) [cite: 178, 196].
+*   **Documentación Senior**: Todas las funciones core están documentadas mediante **Docstrings** profesionales que detallan propósito, parámetros y tipos de retorno [cite: 144, 160].
 
-## 💻 Tecnologías Utilizadas
-- **Lenguaje:** Python 3.x
-- **Estructuras:** Listas, Diccionarios nativos.
-- **Flujos de control:** Match-Case (Python 3.10+), Bucles iterativos, Banderas Booleanas.
-- **Herramientas de control:** Sanitización de cadenas con `.strip()` y `.title()`.
+## 🛠️ Tecnologías Utilizadas
 
----
-*Desarrollado con fines formativos bajo estándares profesionales de Code Review.*
+*   **Python 3.x** [cite: 10]
+*   **Colorama**: Para el estilizado y manejo de colores en la terminal [cite: 178].
+
+## 📂 Estructura del Proyecto
+
+1.  **`app.py`**: El punto de entrada del programa. Gestiona el menú interactivo mediante la instrucción `match` y coordina la interacción con el usuario [cite: 189].
+2.  **`logica_gestor.py`**: El motor lógico. Contiene las funciones core de administración: `nueva_contrasena`, `ver_contrasena`, `eliminar_contrasena` y `editar_contrasena` [cite: 189].
+
+## 🔧 Instalación y Ejecución
+
+1.  **Clonar el repositorio**:
+    ```bash
+    git clone https://github.com/tu-usuario/nombre-del-repo.git
+    ```
+2.  **Instalar dependencias**:
+    ```bash
+    pip install colorama
+    ``` [cite: 178]
+3.  **Ejecutar la aplicación**:
+    ```bash
+    python app.py
+    ``` [cite: 17]
+
+## 📝 Próximos Pasos (Roadmap)
+
+*   [ ] **Persistencia de Datos**: Implementación de guardado permanente en archivos `.txt` o `.json` (Clase 12) [cite: 184, 207].
+*   [ ] **Cifrado**: Seguridad avanzada mediante encriptación de contraseñas.
+*   [ ] **Base de Datos**: Migración del sistema a SQLite para gestión de volúmenes de datos masivos
