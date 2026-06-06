@@ -1,4 +1,4 @@
-manager = []
+manager = {}
 
 # CREAR NUEVA CONTRASEÑA
 
@@ -171,3 +171,4 @@ while True:
             
         case  _:
             print("Opción incorrecta")
+            
