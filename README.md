@@ -39,4 +39,8 @@ Este es un sistema de gestión de credenciales desarrollado en **Python** como p
 
 *   [ ] **Persistencia de Datos**: Implementación de guardado permanente en archivos `.txt` o `.json` (Clase 12) [cite: 184, 207].
 *   [ ] **Cifrado**: Seguridad avanzada mediante encriptación de contraseñas.
+<<<<<<< HEAD
 *   [ ] **Base de Datos**: Migración del sistema a SQLite para gestión de volúmenes de datos masivos
+=======
+*   [ ] **Base de Datos**: Migración del sistema a SQLite para gestión de volúmenes de datos masivos
+>>>>>>> 84934 (Se reescribio el readme con las optimizaciones nuevas del sistema de gestion de contraseñas)
