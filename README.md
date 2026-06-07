@@ -1,4 +1,4 @@
-# 🔐 Gestor de Contraseñas - TalentoLab
+# 🔐 Gestor de Contraseñas
 
 Este es un sistema de gestión de credenciales desarrollado en **Python** como parte del programa de formación en **Talento Tech**. El proyecto representa una evolución técnica significativa, migrando de una estructura de datos basada en listas hacia una arquitectura profesional optimizada con **diccionarios**, **modularización** y **documentación técnica**.
 
