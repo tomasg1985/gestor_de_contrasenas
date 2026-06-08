@@ -1,3 +1,4 @@
+import random
 from colorama import Back, Fore, Style, init
 init()
 
@@ -134,3 +135,33 @@ def buscar_contrasena(diccionario_datos, cuenta_buscada):
         
     if encontrado == False:
         print("No se encontraron registros asociados a tu busqueda" + Back.RED + Fore.WHITE + Style.RESET_ALL)
+        
+# GENERAR SUGERENCIA
+
+def generar_sugerencia():
+    mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    minusculas = "abcdefghijklmnopqrstuvwxyz"
+    numeros = "1234567890"
+    simbolos_y_signos = "!@#$%^&*()_+=-{ }[ ]';/.?<>,\|"
+    
+    while True:
+        solicitud = input("¿Cuántos caracteres desea para su contraseña? ")
+        if solicitud.isdigit():
+            longitud_numero = int(solicitud)
+            break
+        else:
+            print("ERROR: Debes ingresar solo números. Intenta de nuevo.")
+    
+    
+    if longitud_numero < 5:
+        print(f"Contraseña muy insegura{Fore.RED + Style.RESET_ALL}")
+    elif longitud_numero <= 9:
+        print(f"Contraseña insegura{Fore.RED + Style.RESET_ALL}")
+    elif longitud_numero <= 15:
+        print(f"Contraseña poco segura{Fore.YELLOW + Style.RESET_ALL}")
+    else:
+        print(f"Contraseña segura{Fore.GREEN + Style.RESET_ALL}")
+    
+    caracteres = mayusculas + minusculas + numeros + simbolos_y_signos
+    clave = "".join(random.choice(caracteres) for _ in range(longitud_numero))
+    return clave
