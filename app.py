@@ -15,17 +15,28 @@ while True:
     print(f"{Fore.CYAN}Seleccione alguna de las opciones del menú")
     print(f"{Fore.CYAN}==========================================={Style.RESET_ALL}")
     print()
-    print(f"{Back.WHITE + Fore.CYAN}1. Nueva contraseña.")
-    print(f"{Back.YELLOW + Fore.CYAN}2. Editar contraseña.")
-    print(f"{Back.RED + Fore.WHITE}3. Eliminar contraseña.")
-    print(f"{Back.GREEN + Fore.WHITE}4. Ver contraseña.")
-    print(f"{Back.WHITE + Fore.CYAN}5. Buscar contraseña.")
-    print(f"{Back.RED + Fore.WHITE}6. Salir del sistema.")
+    print(f"{Fore.CYAN}1. Generar contraseña aleatoria.")
+    print(f"{Fore.WHITE}2. Nueva contraseña.")
+    print(f"{Fore.YELLOW}3. Editar contraseña.")
+    print(f"{Fore.RED}4. Eliminar contraseña.")
+    print(f"{Fore.GREEN}5. Ver contraseña.")
+    print(f"{Fore.WHITE}6. Buscar contraseña.")
+    print(f"{Fore.RED}7. Salir del sistema.")
+    print()
     
     menu = input("Elija una opción: ")
         
     match menu:
         case "1":
+            
+            print(f"{Fore.CYAN}======================")
+            print(f"{Fore.CYAN}Generar contraseña aleatoria.")
+            print(f"{Fore.CYAN}======================{Style.RESET_ALL}")
+            
+            contrasena_aleatoria = generar_sugerencia()
+            print(contrasena_aleatoria)
+            
+        case "2":
             
             print(f"{Fore.CYAN}======================")
             print(f"{Fore.CYAN}Nueva contraseña.")
@@ -48,9 +59,9 @@ while True:
             else:
                 print(f"{Fore.CYAN}Operacion cancelada")
                 
-            print(f"{Back.GREEN + Fore.WHITE}Guardado con éxito!{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}Guardado con éxito!{Style.RESET_ALL}")
                 
-        case "2":
+        case "3":
             
             print(f"{Fore.CYAN}======================")
             print(f"{Fore.CYAN}Editar contraseña.")
@@ -59,7 +70,7 @@ while True:
             cuenta_modificar = input("¿Qué datos deseas modificar?: ").strip().title()
             editar_contrasena(manager, cuenta_modificar)
             
-        case "3":
+        case "4":
             
             print(f"{Fore.CYAN}======================")
             print(f"{Fore.CYAN}Eliminar contraseña.")
@@ -68,7 +79,7 @@ while True:
             cuenta_borrar = input("¿Qué cuenta desea eliminar?: ").strip().title()
             eliminar_contrasena(manager, cuenta_borrar)
             
-        case "4":
+        case "5":
             
             print(f"{Fore.CYAN}======================")
             print(f"{Fore.CYAN}Ver contraseña.")
@@ -76,7 +87,7 @@ while True:
             
             ver_contrasena(manager)
             
-        case "5":
+        case "6":
             
             print(f"{Fore.CYAN}======================")
             print(f"{Fore.CYAN}Buscar contraseña.")
@@ -86,7 +97,7 @@ while True:
             
             buscar_contrasena(manager, pregunta)
             
-        case "6":
+        case "7":
         
             print(f"{Fore.YELLOW}Saliendo del sistema...")
             break
