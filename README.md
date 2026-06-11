@@ -1,54 +1,83 @@
-# 🔐 Gestor de Contraseñas Local
+# 🔐 Gestor de Contraseñas Corporativo con Persistencia SQL
 
-Un sistema de gestión de credenciales estructurado desarrollado en **Python** como parte del programa de formación en **Talento Tech**. Este proyecto representa una evolución técnica significativa, migrando de estructuras de datos lineales hacia una arquitectura optimizada con diccionarios y una separación estricta de responsabilidades.
-
----
-
-### 🚀 Características Principales
-
-*   **Arquitectura Modular:** Separación estricta de responsabilidades (SoC) entre la interfaz de usuario (`app.py`) y la lógica de negocio (`logica_gestor.py`).
-*   **Eficiencia $O(1)$:** Uso estratégico de diccionarios para garantizar búsquedas, ediciones y eliminaciones instantáneas mediante claves únicas (cuentas), optimizando drásticamente el rendimiento frente a estructuras basadas en listas.
-*   **Validación de Datos:** Implementación de controles de flujo defensivos para mitigar campos vacíos y asegurar la integridad de la información ingresada.
-*   **Experiencia de Usuario (UX):** Interfaz interactiva por línea de comandos potenciada con la librería **Colorama**, proporcionando un sistema de alertas visuales intuitivo (Éxitos en verde, Errores en rojo y Advertencias en amarillo).
-*   **Documentación Senior:** Funciones *core* completamente documentadas mediante **Docstrings** profesionales que detallan de forma explícita el propósito, tipos de parámetros y esquemas de retorno.
+Un sistema avanzado de administración y auditoría de credenciales desarrollado en **Python** e integrado con **SQLite**. Este proyecto representa una arquitectura híbrida de alto rendimiento, combinando la velocidad de acceso en memoria de los diccionarios con la persistencia estructurada y segura de una base de datos relacional.
 
 ---
 
-### 🛠️ Tecnologías Utilizadas
+### 🚀 Innovaciones y Características Técnicas
 
-*   **Python 3.x**
-*   **Colorama:** Para el estilizado y manejo de colores en la terminal de comandos.
-
----
-
-### 📂 Estructura del Proyecto
-
-1.  **`app.py`**: El punto de entrada del programa. Gestiona el menú interactivo mediante la instrucción nativa `match` y coordina la interacción directa con el usuario.
-2.  **`logica_gestor.py`**: El motor lógico de la aplicación. Encapsula las funciones *core* de administración: `nueva_contrasena`, `ver_contrasena`, `eliminar_contrasena` y `editar_contrasena`.
+*   **Persistencia Relacional (SQLite):** Implementación de una base de datos local embebida con esquemas autoincrementales (`INTEGER PRIMARY KEY AUTOINCREMENT`) para asegurar que las credenciales sobrevivan al cierre de la aplicación.
+*   **Consultas Seguras y Parametrizadas:** Mitigación de vulnerabilidades críticas de seguridad mediante el uso de tuplas de escape y marcadores de posición (`?`), previniendo ataques de Inyección SQL (SQLi).
+*   **Arquitectura de Sincronización Dual:** Motor lógico optimizado que realiza operaciones en caliente sobre la base de datos (Consultas, Inserciones, Actualizaciones y Borrados) y reconstruye en paralelo el estado en un diccionario en memoria para lecturas instantáneas.
+*   **Algoritmo de Complejidad Criptográfica:** Generador de claves aleatorias basado en entropía de caracteres que analiza dinámicamente la longitud solicitada por el usuario, clasificando el nivel de seguridad del *string* resultante.
+*   **Programación Defensiva Extrema:** Doble confirmación recursiva para operaciones destructivas (`DELETE`) y validaciones nativas estrictas para evitar el almacenamiento de registros huérfanos o campos vacíos.
 
 ---
 
-### 🔧 Instalación y Ejecución
+### 🛠️ Stack Tecnológico
 
-Sigue estos pasos para clonar, configurar y ejecutar la aplicación de forma local:
+*   **Lenguaje:** Python 3.x
+*   **Persistencia:** [SQLite3](https://python.org) (Motor relacional nativo)
+*   **Librerías de Soporte:** `random` (Entropía y aleatoriedad), `colorama` (Feedback UX visual)
 
-1. **Clonar el repositorio:**
+---
+
+### 🗄️ Esquema de la Base de Datos
+
+El sistema inicializa automáticamente una tabla estructurada llamada `gestor` bajo el siguiente modelo relacional:
+
+```sql
+CREATE TABLE IF NOT EXISTS gestor(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cuenta TEXT NOT NULL,
+    usuario TEXT NOT NULL,
+    contrasena TEXT NULL
+);
+```
+
+---
+
+### 📂 Análisis del Núcleo Lógico (`logica_gestor.py`)
+
+Las funciones del componente de negocio han sido diseñadas bajo estándares profesionales de documentación:
+
+| Función | Tipo de Operación | Descripción Técnica |
+| :--- | :--- | :--- |
+| `cargar_datos()` | **Lectura Inicial / Boot** | Consulta el disco duro al arrancar la app y mapea las filas relacionales en un diccionario indexado por clave única. |
+| `nueva_contrasena()` | **Escritura (INSERT)** | Inserta las credenciales en la DB, captura el ID generado en tiempo real (`lastrowid`) y actualiza el estado local. |
+| `buscar_contrasena()` | **Filtro Indexado (SELECT)** | Realiza búsquedas directas en el motor de base de datos optimizando el consumo de memoria. |
+| `editar_contrasena()` | **Mutación (UPDATE)** | Sanitiza las nuevas entradas del usuario mediante `.strip().title()` y actualiza el registro en ambas capas. |
+| `eliminar_contrasena()` | **Destrucción (DELETE)** | Implementa un flujo de confirmación binaria segura antes de ejecutar la remoción física del registro. |
+| `generar_sugerencia()`| **Lógica Algorítmica** | Evalúa la robustez de las claves mediante validaciones numéricas (`.isdigit()`) y genera hashes aleatorios seguros. |
+
+---
+
+### ⚙️ Instalación y Pruebas Local
+
+Ejecuta el entorno en tu terminal con los siguientes pasos:
+
+1. **Clonar la versión con soporte SQL:**
    ```bash
    git clone https://github.com
    cd gestor_de_contrasenas
    ```
 
-2. **Instalar las dependencias necesarias:**
+2. **Instalar el manejador de interfaz visual:**
    ```bash
    pip install colorama
    ```
 
-3. **Iniciar la aplicación:**
+3. **Iniciar el gestor de credenciales:**
    ```bash
    python app.py
    ```
+   *(Nota: Al ejecutarlo por primera vez, el sistema creará automáticamente el archivo de base de datos `gestor.db` en la raíz).*
 
 ---
+
+### 📄 Licencia
+
+Este software se distribuye bajo la Licencia MIT. Libre para uso, modificación y distribución académica.
 
 ### 📄 Licencia
 
