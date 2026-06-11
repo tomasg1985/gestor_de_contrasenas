@@ -6,7 +6,7 @@ print(f"{Fore.CYAN}=====================================")
 print(f"{Fore.CYAN}Sistema para gestion de contraseñas")
 print(f"{Fore.CYAN}======================================{Style.RESET_ALL}")
 
-manager = {}
+manager = cargar_datos()
 
 while True:
     
@@ -33,8 +33,8 @@ while True:
             print(f"{Fore.CYAN}Generar contraseña aleatoria.")
             print(f"{Fore.CYAN}======================{Style.RESET_ALL}")
             
-            contrasena_aleatoria = generar_sugerencia()
-            print(contrasena_aleatoria)
+            contrasena_sugerida = generar_sugerencia()
+            print(contrasena_sugerida)
             
         case "2":
             
@@ -99,9 +99,11 @@ while True:
             
         case "7":
         
-            print(f"{Fore.YELLOW}Saliendo del sistema...")
+            print(f"{Fore.YELLOW}Saliendo del sistema...{Style.RESET_ALL}")
             break
             
         case  _:
-            print(f"{Fore.RED}Opción incorrecta")
-            
+            print(f"{Fore.RED}Opción incorrecta{Style.RESET_ALL}")
+
+conexion.close()
+print(f"{Fore.GREEN}Conexión cerrada. ¡Hasta luego!{Style.RESET_ALL}")
