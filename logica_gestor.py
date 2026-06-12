@@ -21,10 +21,10 @@ conexion.commit()
 def nueva_contrasena(diccionario_datos, user, account, password):
 
     """
-    Registra credenciales en la base de datos y sincroniza el diccionario local. [cite: 134, 167]
+    Registra credenciales en la base de datos y sincroniza el diccionario local.
     
     Parámetros:
-        diccionario_datos (dict): Diccionario de trabajo en memoria. [cite: 272]
+        diccionario_datos (dict): Diccionario de trabajo en memoria.
         user (str): Nombre de usuario o mail.
         account (str): Nombre del sitio o aplicación.
         password (str): Contraseña a guardar.
@@ -38,33 +38,19 @@ def nueva_contrasena(diccionario_datos, user, account, password):
         cursor.execute('INSERT INTO gestor(usuario, cuenta, contrasena)VALUES(?,?,?)', (user, account, password))
         id_generado = cursor.lastrowid
         conexion.commit()
-    except sqlite3.Error:
-        print(f"Error de insercion a la base de datos.")
-        return
+    
+        diccionario_datos[account] = {
+            "id" : id_generado,
+            "usuario" : user,
+            "contrasena" : password
+        }
         
-    
-    """
-    PROPÓSITO
-    
-    Esta funcion es la encargada de crear ujna nueva contraseña.
-    
-    
-    ¿COMO ES SU FUNCIONAMIENTO?
-    
-    Hace uso de la cuenta del sitio web como clave unica en el dicionario, esto permite que el sistema asocie el nombre del sitio web con sus credenciales sin tener que buscar en una lista de registros.
-    
-    
-    VALIDACIÓN:
-    
-    Se incluye un (if) inicial para asegurar que no se guarden campos vacios lo que hace al programa mas robusto.
-    
-    """
+        print(Fore.GREEN + "¡Guardado con éxito en el sistema!" + Style.RESET_ALL)
+        
+    except sqlite3.Error as e:
+        conexion.rollback()
+        print(Fore.RED + f"Error al guardar en la base de datos: {e}" + Style.RESET_ALL)
 
-    diccionario_datos[account] = {
-        "id" : id_generado,
-        "usuario" : user,
-        "contrasena" : password
-    }
     
     return True
     
@@ -73,7 +59,7 @@ def nueva_contrasena(diccionario_datos, user, account, password):
 def editar_contrasena(diccionario_datos, cuenta_a_editar):
     
     """
-    Actualiza el usuario y clave de un registro existente en la DB y el diccionario. [cite: 22, 230]
+    Actualiza el usuario y clave de un registro existente en la DB y el diccionario.
     
     Parámetros:
         diccionario_datos (dict): Diccionario de sincronización.
@@ -89,12 +75,15 @@ def editar_contrasena(diccionario_datos, cuenta_a_editar):
         nuevo_user = input("Ingrese los nuevos datos de usuario: ").strip().title()
         nuevo_pass = input("Ingrese la nueva contraseña: ").strip()
         
-        cursor.execute('UPDATE gestor SET usuario = ?, contrasena = ? WHERE cuenta = ?', (nuevo_user, nuevo_pass, cuenta_a_editar))
-
-        diccionario_datos[cuenta_a_editar] = {"usuario" : nuevo_user, "contrasena" : nuevo_pass}
-
-        conexion.commit()
-
+        try:
+            cursor.execute('UPDATE gestor SET usuario = ?, contrasena = ? WHERE cuenta = ?', (nuevo_user, nuevo_pass, cuenta_a_editar))
+            diccionario_datos[cuenta_a_editar] = {"usuario" : nuevo_user, "contrasena" : nuevo_pass}
+            conexion.commit()
+            
+        except sqlite3.Error as e:
+            conexion.rollback()
+            print(Fore.RED + f"Error al editar en la base de datos: {e}" + Style.RESET_ALL)
+        
     else:
         print("La cuenta ingresada no existe" + Back.RED + Fore.WHITE + Style.RESET_ALL)
 
@@ -103,7 +92,7 @@ def editar_contrasena(diccionario_datos, cuenta_a_editar):
 def eliminar_contrasena(diccionario_datos, cuenta_a_eliminar):
     
     """
-    Borra una credencial del sistema tras doble confirmación del usuario. [cite: 140, 233]
+    Borra una credencial del sistema tras doble confirmación del usuario.
     
     Parámetros:
         diccionario_datos (dict): Diccionario de sincronización.
@@ -114,14 +103,22 @@ def eliminar_contrasena(diccionario_datos, cuenta_a_eliminar):
     
     if confirmar_eliminacion == "si":
         segunda_confirmacion = input("Realmente esta seguro? Si/No").strip().lower()
+        
         if segunda_confirmacion == "si":
-            cursor.execute('DELETE FROM gestor WHERE cuenta = ?', (cuenta_a_eliminar,))
-            conexion.commit()
-            if cuenta_a_eliminar in diccionario_datos:
-                diccionario_datos.pop(cuenta_a_eliminar)
-                print("¡Credencial eliminada con éxito!" + Back.GREEN + Fore.WHITE + Style.RESET_ALL)
-            else:
-                print(f"Error: La cuenta '{cuenta_a_eliminar}' no se encontró en el sistema." + Back.RED + Fore.WHITE + Style.RESET_ALL)
+            
+            try:
+                cursor.execute('DELETE FROM gestor WHERE cuenta = ?', (cuenta_a_eliminar,))
+                conexion.commit()
+                
+                if cuenta_a_eliminar in diccionario_datos:
+                    diccionario_datos.pop(cuenta_a_eliminar)
+                    print("¡Credencial eliminada con éxito!" + Back.GREEN + Fore.WHITE + Style.RESET_ALL)
+                else:
+                    print(f"Error: La cuenta '{cuenta_a_eliminar}' no se encontró en el sistema." + Back.RED + Fore.WHITE + Style.RESET_ALL)
+            except sqlite3.Error as e:
+                conexion.rollback()
+                print(Fore.RED + f"Error al eliminar un registro en la base de datos: {e}" + Style.RESET_ALL)
+
             print(f"Registro eliminado...")
     else:
         print(f"No se elimino el registro.")
@@ -130,14 +127,19 @@ def eliminar_contrasena(diccionario_datos, cuenta_a_eliminar):
 
 def cargar_datos():
     """
-    Consulta la tabla 'gestor' y reconstruye el diccionario en memoria. [cite: 14, 15]
+    Consulta la tabla 'gestor' y reconstruye el diccionario en memoria.
     
     Retorna:
-        dict: Diccionario sincronizado con los datos persistentes del disco. [cite: 133]
+        dict: Diccionario sincronizado con los datos persistentes del disco.
     """
-
-    cursor.execute('SELECT * FROM gestor')
-    filas = cursor.fetchall()
+    try:
+        cursor.execute('SELECT * FROM gestor')
+        filas = cursor.fetchall()
+    except sqlite3.Error as e:
+        conexion.rollback()
+        print(Fore.RED + f"Error al cargar los registros de la base de datos: {e}" + Style.RESET_ALL)
+        return {}
+        
 
     diccionario_cargado = {}
     for f in filas:
@@ -146,14 +148,14 @@ def cargar_datos():
             "usuario" : f[2],
             "contrasena" : f[3]
         }
-        return diccionario_cargado
+    return diccionario_cargado
     
 # VER CONTRASEÑA
     
 def ver_contrasena(diccionario_datos):
     
     """
-    Muestra en pantalla todas las credenciales cargadas de forma ordenada. [cite: 133, 134]
+    Muestra en pantalla todas las credenciales cargadas de forma ordenada.
     
     Parámetros:
     diccionario_datos (dict): El diccionario que contiene la información.
@@ -171,7 +173,7 @@ def ver_contrasena(diccionario_datos):
 def buscar_contrasena(diccionario_datos, cuenta_buscada):
     
     """
-    Realiza una consulta filtrada en la base de datos para hallar una cuenta específica. [cite: 15, 218]
+    Realiza una consulta filtrada en la base de datos para hallar una cuenta específica.
     
     Parámetros:
         cuenta_buscada (str): Nombre de la cuenta a localizar.
@@ -190,7 +192,7 @@ def buscar_contrasena(diccionario_datos, cuenta_buscada):
 def generar_sugerencia():
     
     """
-    Genera una cadena aleatoria de caracteres para proponer como contraseña segura. [cite: 169, 265]
+    Genera una cadena aleatoria de caracteres para proponer como contraseña segura.
     
     Retorna:
         str: Una contraseña sugerida de alta complejidad.
