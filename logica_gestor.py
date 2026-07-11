@@ -35,9 +35,11 @@ def nueva_contrasena(diccionario_datos, user, account, password):
         return False
     
     try:
-        cursor.execute('INSERT INTO gestor(usuario, cuenta, contrasena)VALUES(?,?,?)', (user, account, password))
-        id_generado = cursor.lastrowid
-        conexion.commit()
+        with sqlite3.connect("gestor.db") as conexion:
+            cursor = conexion.cursor()
+            cursor.execute('INSERT INTO gestor(usuario, cuenta, contrasena)VALUES(?,?,?)', (user, account, password))
+            id_generado = cursor.lastrowid
+            conexion.commit()
     
         diccionario_datos[account] = {
             "id" : id_generado,
@@ -102,7 +104,7 @@ def eliminar_contrasena(diccionario_datos, cuenta_a_eliminar):
     confirmar_eliminacion = input("Confirma que desea eliminar esta cuenta? Esta accion no se puede revertir Si/No ").strip().lower()
     
     if confirmar_eliminacion == "si":
-        segunda_confirmacion = input("Realmente esta seguro? Si/No").strip().lower()
+        segunda_confirmacion = input("Realmente esta seguro? Si/No ").strip().lower()
         
         if segunda_confirmacion == "si":
             
@@ -125,7 +127,7 @@ def eliminar_contrasena(diccionario_datos, cuenta_a_eliminar):
 
 # CARGAR DATOS
 
-def cargar_datos():
+def cargar_datos() -> dict[str, dict]:
     """
     Consulta la tabla 'gestor' y reconstruye el diccionario en memoria.
     
@@ -133,22 +135,18 @@ def cargar_datos():
         dict: Diccionario sincronizado con los datos persistentes del disco.
     """
     try:
-        cursor.execute('SELECT * FROM gestor')
-        filas = cursor.fetchall()
+        with sqlite3.connect("gestor.db") as conexion:
+            cursor = conexion.cursor()
+            cursor.execute('SELECT * FROM gestor')
+            filas = cursor.fetchall()
     except sqlite3.Error as e:
         conexion.rollback()
         print(Fore.RED + f"Error al cargar los registros de la base de datos: {e}" + Style.RESET_ALL)
         return {}
+    
+    manager: dict[str, dict] = {f: {"id" : f, "usuario" : f[2], "contrasena" : f[3]} for f in filas}
         
-
-    diccionario_cargado = {}
-    for f in filas:
-        diccionario_cargado[f[1]] = {
-            "id" : f,
-            "usuario" : f[2],
-            "contrasena" : f[3]
-        }
-    return diccionario_cargado
+    return manager
     
 # VER CONTRASEÑA
     
@@ -186,6 +184,18 @@ def buscar_contrasena(diccionario_datos, cuenta_buscada):
         print(f"Cuenta encontrada - Usuario: {cuenta_encontrada[2]} | Contraseña: {cuenta_encontrada[3]}")
     else: 
         print("Registro no encontrado.")
+        
+# BUSCAR COINCIDENCIAS
+
+def buscar_coincidencias(manager, texto_busqueda) -> list[str]:
+    
+    """
+    Realiza una consulta filtrada en la base de datos para hallar una cuenta específica.
+    
+    Parámetros:
+        cuenta_buscada (str): Nombre de la cuenta a localizar.
+    """
+    return [cuenta.lower() for cuenta in manager if texto_busqueda.lower() in cuenta.lower()]
 
 # GENERAR SUGERENCIA
 
@@ -221,5 +231,3 @@ def generar_sugerencia():
         
     clave = "".join(random.choice(todos) for _ in range(longitud_numero))
     return clave
-
-conexion.close()
