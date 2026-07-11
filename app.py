@@ -1,3 +1,4 @@
+import getpass
 from colorama import Back, Fore, Style, init
 from logica_gestor import *
 init(autoreset=True)
@@ -21,7 +22,8 @@ while True:
     print(f"{Fore.RED}4. Eliminar contraseña.")
     print(f"{Fore.GREEN}5. Ver contraseña.")
     print(f"{Fore.WHITE}6. Buscar contraseña.")
-    print(f"{Fore.RED}7. Salir del sistema.")
+    print(f"{Fore.WHITE}7. Buscar coincidencias.")
+    print(f"{Fore.RED}8. Salir del sistema.")
     print()
     
     menu = input("Elija una opción: ")
@@ -47,19 +49,22 @@ while True:
             if pregunta == "Si":
         
                 print(f"{Fore.GREEN}Paso 1: Ingrese el nombre de la cuenta")
-                account = input("Ingrese el nombre de la cuenta: ").strip().title()
+                account = input("Ingrese el nombre de la cuenta: ").strip()
                 
                 print(f"{Fore.GREEN}Paso 2: Ingrese el mail del usuario")
-                user = input("Ingrese mail o nombre de usuario: ").strip().title()
+                user = input("Ingrese mail o nombre de usuario: ").strip()
                 
                 print(f"{Fore.GREEN}Paso 3: Ingrese la contreaseña del usuario")
-                password = input("Ingrese su contraseña: ").strip()
-            
-                nueva_contrasena(manager, user, account, password)
+                password = getpass.getpass("Ingrese su contraseña: ").strip()
+                
+                if len(password) >= 8:
+                    nueva_contrasena(manager, user, account, password)
+                    print(f"{Fore.GREEN}Guardado con éxito!{Style.RESET_ALL}")
+                else:
+                    print(f"{Fore.RED}[ERROR] La contraseña es muy corta (mínimo 8 caracteres).{Style.RESET_ALL}")
             else:
                 print(f"{Fore.CYAN}Operacion cancelada")
                 
-            print(f"{Fore.GREEN}Guardado con éxito!{Style.RESET_ALL}")
                 
         case "3":
             
@@ -98,6 +103,24 @@ while True:
             buscar_contrasena(manager, pregunta)
             
         case "7":
+            
+            print(f"{Fore.CYAN}======================")
+            print(f"{Fore.CYAN}Buscar coincidencias.")
+            print(f"{Fore.CYAN}======================{Style.RESET_ALL}")
+            
+            texto_busqueda = input("Busqueda personalizada de cuenta").strip().title()
+            print("Que cuenta desea buscar")
+            
+            resultados = buscar_coincidencias(manager, texto_busqueda)
+            
+            if resultados:
+                print(f"\n{Fore.GREEN}Cuentas encontradas:{Style.RESET_ALL}")
+                for cuenta in resultados:
+                    print(f"- {cuenta}")
+            else:
+                print(f"\n{Fore.YELLOW}[INFO] No se encontraron coincidencias para '{texto_busqueda}'.{Style.RESET_ALL}")
+            
+        case "8":
         
             print(f"{Fore.YELLOW}Saliendo del sistema...{Style.RESET_ALL}")
             break
